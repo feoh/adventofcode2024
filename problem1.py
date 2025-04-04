@@ -1002,28 +1002,28 @@ lists_blob = """
 12964   56430
 """
 
-unsorted_left_list = []
-unsorted_right_list = []
+left_list = []
+right_list = []
 
 distance_list = []
 
 for line in lists_blob.splitlines():
-    print(f"{line=}")
     if not line:
+        print(f"{line=} skipping!")
         continue
 
-    left_id, right_id = line.split(' ')
+    left_id, right_id = line.split('   ')
     print(f"{left_id=}{right_id=}")
-    unsorted_left_list.append(left_id)
-    unsorted_right_list.append(right_id)
+    left_list.append(int(left_id))
+    right_list.append(int(right_id))
 
-print(f"{unsorted_left_list=}")
-print(f"{unsorted_right_list=}")
-left_list = unsorted_left_list.sort()
-right_list = unsorted_right_list.sort()
+left_list.sort()
+right_list.sort()
 
-for position in range(len(left_list)):
-    distance_list.append(right_list[position] - left_list[position])
-
+for position in range(len(right_list)):
+    print(f"{position=}\
+            {abs(left_list[position] - right_list[position])=}")
+    distance_list.append(abs(left_list[position] - right_list[position]))
+print(f"{distance_list=}")
 distance_sum = sum(distance_list)
-print(distance_sum)
+print(f"{distance_sum=}")
