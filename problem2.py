@@ -1,4 +1,4 @@
-from typing import List
+from enum import Enum
 
 data_blob = """ 19 21 24 27 24
 85 87 89 92 93 96 98 98
@@ -1002,18 +1002,52 @@ data_blob = """ 19 21 24 27 24
 39 37 35 32 29 27 24
 """
 
-def is_report_safe(report: List[str]) -> bool:
+class Direction(Enum):
+    INCREASING=1
+    DECREASING=2
+
+def increasing_or_decreasing(report: list[int]) -> Direction:
+    if report[0] < report[1]:
+        return Direction.INCREASING
+    else:
+        return Direction.DECREASING
+
+def is_report_safe(report: list[int]) -> bool:
     # In order for a report to be safe both of these must be true:
     # - The levels are either all increasing or all decreasing.
     # - Any two adjacent levels differ by at least one and at most three.
+    # If any of these conditions are false we mark the report unsafe and stop
 
+    direction: Direction = increasing_or_decreasing(report)  
+    print(f"{direction=}")
     for (index, level) in enumerate(report):
-        next = index+1
-        # If we make it to the end the report is safe!
+        next = index + 1
+        # If we hit the end? We're done and safe!
         if next == len(report):
-            safe = True
-        if level
+            print(f"done check: {next == len(report)}")
+            return True
+        if direction == Direction.INCREASING:
+            if level > report[next]:
+                print(f"failing out increasing check: {level=} {report[next]=}")
+                return False
+        if direction == Direction.DECREASING:
+            if level < report[next]:
+                print(f"failing out decreasing check: {level=} {report[next]=}")
+                return False
+        delta = abs(report[index] - report[next])
+        if (delta < 1) or (delta > 3):
+            print(f"failing out delta check: {delta=}")
+            return False
+    # We've passed all the filters. We are safe!
+    return True
 
-for line in data_blob:
-    reports = line.split()
 
+if __name__ == "__main__":
+    safe_reports = 0
+    for line in data_blob.splitlines():
+        report_strings = line.split()
+        report = [ int(rpt) for rpt in report_strings ]
+        if is_report_safe(report):
+            safe_reports += 1
+
+print(f"Number of safe reports: {safe_reports}")
